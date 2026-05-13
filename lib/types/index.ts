@@ -3,10 +3,9 @@ export interface Product {
   title: string;
   description: string;
   price: number;
-  category: string;
   image_url: string;
-  status: 'available' | 'sold' | 'reserved';
-  seller_id: string;
+  seller_name: string;
+  status: '판매중' | '예약중' | '판매완료';
   created_at: string;
   updated_at: string;
 }
