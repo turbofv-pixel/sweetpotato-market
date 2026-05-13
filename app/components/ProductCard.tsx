@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Product } from "@/lib/types";
+import { getImageUrl, getCategoryEmoji } from "@/lib/getProductImage";
 
 const statusStyle: Record<Product["status"], string> = {
   판매중: "bg-green-100 text-green-800 border border-green-300",
@@ -14,30 +16,32 @@ function formatPrice(price: number) {
 }
 
 function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
+  return new Date(dateString).toLocaleDateString("ko-KR", { month: "long", day: "numeric" });
 }
 
 export default function ProductCard({ product }: { product: Product }) {
   const [imgError, setImgError] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const imageUrl = getImageUrl(product.id);
+  const emoji = getCategoryEmoji(product.title);
 
   return (
-    <div
+    <Link
+      href={`/products/${product.id}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="bg-white rounded-sm overflow-hidden cursor-pointer group
+      className="block bg-white rounded-sm overflow-hidden cursor-pointer group
         border-2 border-[#2E7D32]
         shadow-md hover:shadow-xl
         transition-all duration-300 ease-out
         hover:-translate-y-2"
     >
-      {/* 이미지 */}
       <div className="relative aspect-square bg-green-50 overflow-hidden">
-        {product.image_url && !imgError ? (
+        {!imgError ? (
           <img
-            src={product.image_url}
+            src={imageUrl}
             alt={product.title}
+            referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -51,15 +55,19 @@ export default function ProductCard({ product }: { product: Product }) {
             </span>
           </div>
         )}
+
+        {/* 카테고리 이모지 뱃지 */}
+        <div className="absolute bottom-2 right-2 bg-white/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center text-base shadow">
+          {emoji}
+        </div>
+
         <span className={`absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded-sm ${statusStyle[product.status]}`}>
           {product.status}
         </span>
       </div>
 
-      {/* 노란 구분선 */}
       <div className="h-1 bg-[#FFD600]" />
 
-      {/* 내용 */}
       <div className="p-3">
         <h3 className="font-bold text-[#1B5E20] text-sm leading-snug line-clamp-2 mb-1">
           {product.title}
@@ -79,6 +87,6 @@ export default function ProductCard({ product }: { product: Product }) {
           to { transform: rotate(360deg); }
         }
       `}</style>
-    </div>
+    </Link>
   );
 }
