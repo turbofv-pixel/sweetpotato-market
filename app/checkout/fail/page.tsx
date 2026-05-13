@@ -1,8 +1,9 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function PaymentFailPage() {
+function FailContent() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message');
   const code = searchParams.get('code');
@@ -17,7 +18,6 @@ export default function PaymentFailPage() {
       {code && (
         <p className="text-xs text-gray-400 mb-8">오류 코드: {code}</p>
       )}
-
       <div className="flex flex-col gap-3">
         <button
           onClick={() => window.history.back()}
@@ -35,5 +35,13 @@ export default function PaymentFailPage() {
         </a>
       </div>
     </div>
+  );
+}
+
+export default function PaymentFailPage() {
+  return (
+    <Suspense>
+      <FailContent />
+    </Suspense>
   );
 }
